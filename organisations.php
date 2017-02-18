@@ -7,15 +7,15 @@
  **/
 setlocale(LC_ALL, 'en_US.UTF8');
 
+//Tell the user we've started
+echo "Generating an authoritative list of all New Zealand Governemnt organisations in JSON Linked Data format... please wait...";
+
 //pull direct from govt.nz government organisation service
 $govt_orgs = json_decode(file_get_contents("https://www.govt.nz/api/v2/organisation/list?limit=500&sort=name"), true); // decode json
 
 //set up some variables
 $orgs_jsonld = "";
 $orgs = $govt_orgs['organisations'];
-
-//Tell the user we've started
-echo "Generating an authoritative list of all New Zealand Governemnt organisations in JSON Linked Data format... please wait..."
 
 //loop over the orgs
 foreach ($orgs as $org){
@@ -30,10 +30,10 @@ foreach ($orgs as $org){
 file_put_contents('organisations.jsonld', $orgs_jsonld);
 
 //Tell the user we're finished
-echo "DING! Finished - have an awesome day!"
+echo "DING! Finished - have an awesome day!";
 
 //Cleans the URL to Ascii format to use as 'name' property in CKAN. See http://cubiq.org/the-perfect-php-clean-url-generator
-public function cleanURL($str, $replace=array(), $delimiter='-') {
+function cleanURL($str, $replace=array(), $delimiter='-') {
 	if( !empty($replace) ) {
 		$str = str_replace((array)$replace, ' ', $str);
 	}
@@ -45,7 +45,7 @@ public function cleanURL($str, $replace=array(), $delimiter='-') {
 }
 
 //ensures that characters in jsonld that might break the API run are correctly escaped.
-public function json_esc($input, $esc_html = true) {
+function json_esc($input, $esc_html = true) {
         $result = '';
         if (!is_string($input)) {
             $input = (string) $input;
