@@ -1,0 +1,27 @@
+#!/usr/bin/env python
+import csv, urllib2, sys
+
+# Given a csv of URLs, return a CSV of server response codes
+# Args: links_csv path to the csv file
+links_csv = sys.argv[1]
+
+# clear the result file
+open('result.csv', 'w').close()
+
+#open and use the input file
+with open(links_csv, 'rb') as csvfile:
+    reader = csv.reader(csvfile, delimiter=',', quotechar='"')
+    for row in reader:
+        try:
+            response = urllib2.urlopen(row[0])
+        except urllib2.HTTPError, e:
+            response = e
+
+        #return the server code and the URL as a key
+        code = str(response.code) + ", " + response.url + "\n"
+
+        #write result to csv
+        result = open('result.csv','a')
+        result.write(code)
+        result.close()
+        print code

@@ -1,0 +1,11 @@
+#!/usr/bin/env python
+# API ping to the trash purger in CKAN
+import urllib2, sys
+
+ckan_base = sys.argv[1]
+admin_api_key = sys.argv[2]
+
+request = urllib2.Request('{0}/ckan-admin/trash'.format(ckan_base))
+request.add_header('Authorization', admin_api_key)
+response = urllib2.urlopen(request, 'purge-packages=purge')
+assert response.code == 200

@@ -1,0 +1,46 @@
+#!/usr/bin/env python
+import csv, urllib, urllib2, sys, json, datetime
+
+# This takes a known csv file of CKAN resource ids that are:
+# 1. causing a 500 error after migration
+# 2. need a datastore_create triggered to reinsert them into the datastore.
+# Args:
+#   links_csv link to the csv file with reource ids
+#   ckan_base url to CKAN
+#   admin_api_key CKAN API key (must be a sysadmin)
+
+links_csv = sys.argv[1]
+ckan_base = sys.argv[2]
+admin_api_key = sys.argv[3]
+
+#open and use the input file
+with open(links_csv, 'rb') as csvfile:
+    reader = csv.reader(csvfile, delimiter=',', quotechar='"')
+    for row in reader:
+        try:
+            print row[0]
+            # Format data to post to API.
+            data = urllib.quote(json.dumps({'resource_id': row[0], 'force': 'True'}))
+
+            # Make the HTTP POST request to the CKAN API.
+            request = urllib2.Request('{0}/api/action/datastore_create'.format(ckan_base))
+            request.add_header('Authorization', admin_api_key)
+            response = urllib2.urlopen(request, data)
+
+            # Use the json module to load CKAN's response into a dictionary.
+            response_dict = json.loads(response.read())
+
+            # Check the contents of the response.
+            assert response_dict['success'] is True
+            result = response_dict['result']
+
+            # Log the result in a log file
+            log = open('datastore_create.log','a')
+            log.write(str(result) + "\n")
+            log.close()
+        except urllib2.HTTPError, e:
+            print "Error occured" + e.code
+            #Log the error
+            log = open('datastore_create.log','a')
+            log.write(str(e) + "\n")
+            log.close()
