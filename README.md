@@ -18,8 +18,17 @@ $ php ./organisations.php
 
 ### Loading to CKAN
 
-`ckanapi load organizations -I ./organisations.jsonld -r CKAN_URL -a API_KEY
-`
+`ckanapi load organizations -I ./organisations.jsonld -r CKAN_URL -a API_KEY`
+
+### Updating the status of an existing and not active organisations
+
+ 1. Login as sysadmin and find the non-active organsiation (most NZ govt orgs exist already as they were loaded from a full list of all govt orgs).
+
+ 2. Copy the id of the org eg `marlborough-district-council`.
+
+ 3. Run the following ckanapi command `ckanapi action organization_update id=marlborough-district-council state=active -r CKAN_URL -a API_KEY`
+
+
 
 ## Group
 ### Loading group taxonomy
