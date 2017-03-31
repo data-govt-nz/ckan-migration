@@ -59,6 +59,23 @@ Loads datasets into CKAN.
  - Harvesters can sometimes run during the loading process which can cause duplicate datasets (harvester runs before a dataset is imported).
  - CKANAPI imported resources can sometimes not fire the datapusher and be added in the datastore for data exploration. In this case you can make use of the `datastore_create` API call using a list of known erroring resource id numbers. It is possible that this occurs due to the imported resource property `datastore_active` being `true` when in a new CKAN instance the datastore is empty for this resource (yet to test this assumption).
 
+## Redirections of old data.govt.nz datasets to new CKAN portal
+
+The old URL pattern uses the format `dataset/show/1234` which does not directly map to the new URLs on the CKAN portal. CKAN uses SEO friendly URLs eg. `dataset/my-extremely-interesting-dataset-about-stuff`. The final segment of the URL is based on the dataset title.
+
+As a way of gaining a mapping we have used an export from our web analytics including the old dataset id number and the page title. We then run this through a simple spreadsheet formula to extract the title name and build the best guess for the new URL.
+
+### Extraction formula
+
+`=concat(lookup!$A$1,lower(ArrayFormula(REGEXREPLACE(SUBSTITUTE(data!B1," » Data.govt.nz",""), "[^a-zA-Z0-9]+", "-"))))`
+
+This:
+ - looks up the base domain in a separate worksheet ie. catalogue.data.govt.nz
+ - Removes the un required text from the title string i.e » Data.govt.nz
+ - Converts the string into a URL segment
+
+See included open spreadsheet tool.
+
 ## License
 See [LICENSE.md](LICENSE.md)
 
